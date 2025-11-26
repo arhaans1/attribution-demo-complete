@@ -28,7 +28,7 @@ const Integrations = () => {
       id: 'zoom',
       name: 'Zoom',
       description: 'Track webinar attendance and engagement metrics',
-      logoUrl: 'https://logo.clearbit.com/zoom.us',
+      logoUrl: 'https://www.logo.wine/a/logo/Zoom_Video_Communications/Zoom_Video_Communications-Logo.wine.svg',
       logoColor: '#2D8CFF',
       status: 'connected',
       account: 'asr.mediapro@gmail.com',
