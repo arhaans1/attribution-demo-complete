@@ -91,6 +91,50 @@ const Dashboard = () => {
     )
   );
 
+  // Calculate attribution breakdown
+  const totalImpressions = campaigns.reduce((acc, c) => acc + c.impressions, 0);
+  const totalLandingPageViews = campaigns.reduce(
+    (acc, campaign) =>
+      acc +
+      campaign.adSets.reduce(
+        (adSetAcc, adSet) =>
+          adSetAcc +
+          adSet.ads.reduce((adAcc, ad) => adAcc + ad.landingPageViews, 0),
+        0
+      ),
+    0
+  );
+
+  // Attribution models (based on total revenue)
+  const attribution = {
+    firstClick: {
+      revenue: totals.revenue * 0.35, // 35% attributed to first click
+      conversions: Math.round(totals.purchases * 0.35),
+      avgOrderValue: (totals.revenue * 0.35) / Math.round(totals.purchases * 0.35),
+    },
+    lastClick: {
+      revenue: totals.revenue * 0.45, // 45% attributed to last click
+      conversions: Math.round(totals.purchases * 0.45),
+      avgOrderValue: (totals.revenue * 0.45) / Math.round(totals.purchases * 0.45),
+    },
+    multiTouch: {
+      revenue: totals.revenue * 0.2, // 20% distributed across journey
+      conversions: Math.round(totals.purchases * 0.2),
+      avgOrderValue: (totals.revenue * 0.2) / Math.round(totals.purchases * 0.2),
+    },
+  };
+
+  // Funnel data
+  const funnelData = [
+    { stage: 'Ad Views', count: totalImpressions, percentage: 100, color: 'from-blue-500 to-blue-600' },
+    { stage: 'Landing Page Visitors', count: totalLandingPageViews, percentage: (totalLandingPageViews / totalImpressions) * 100, color: 'from-indigo-500 to-indigo-600' },
+    { stage: 'Leads Generated', count: totals.leads, percentage: (totals.leads / totalImpressions) * 100, color: 'from-purple-500 to-purple-600' },
+    { stage: 'Webinar/Call Attended', count: webinarStats.attended + callStats.completed, percentage: ((webinarStats.attended + callStats.completed) / totals.leads) * 100, color: 'from-pink-500 to-pink-600' },
+    { stage: 'L1 Conversions', count: webinarStats.l1Sales, percentage: (webinarStats.l1Sales / (webinarStats.attended + callStats.completed)) * 100, color: 'from-orange-500 to-orange-600' },
+    { stage: 'L2 Webinar/Call', count: callStats.completed, percentage: (callStats.completed / webinarStats.l1Sales) * 100, color: 'from-yellow-500 to-yellow-600' },
+    { stage: 'L2 Conversions', count: l2Sales, percentage: (l2Sales / callStats.completed) * 100, color: 'from-green-500 to-green-600' },
+  ];
+
   const toggleCampaign = (campaignId: string) => {
     const newExpanded = new Set(expandedCampaigns);
     if (newExpanded.has(campaignId)) {
@@ -129,79 +173,87 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Top Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <MetricCard
-          title="Ad Spend"
-          value={formatCurrency(totals.spend)}
-          subtitle={`+18% GST: ${formatCurrency(spendWithGST)}`}
-          change="+12% vs last period ↑"
-          changeColor="text-green-600"
-          icon="💰"
-          bgColor="bg-gradient-to-br from-blue-50 to-blue-100"
-        />
-        <MetricCard
-          title="Total Revenue"
-          value={formatCurrency(totals.revenue)}
-          subtitle={`From ${totals.purchases} purchases`}
-          change="+24% vs last period ↑"
-          changeColor="text-green-600"
-          icon="💵"
-          bgColor="bg-gradient-to-br from-green-50 to-green-100"
-        />
-        <MetricCard
-          title="ROAS"
-          value={formatROAS(totalROAS)}
-          subtitle="Return on Ad Spend"
-          change="+0.8x vs last period ↑"
-          changeColor="text-green-600"
-          icon="📈"
-          bgColor="bg-gradient-to-br from-purple-50 to-purple-100"
-        />
+      {/* Campaign Overview */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">📊 Campaign Overview</h2>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <MetricCard
+            title="Ad Spend"
+            value={formatCurrency(totals.spend)}
+            subtitle={`+18% GST: ${formatCurrency(spendWithGST)}`}
+            change="+12% vs last period ↑"
+            changeColor="text-green-600"
+            icon="💰"
+            bgColor="bg-gradient-to-br from-blue-50 to-blue-100"
+          />
+          <MetricCard
+            title="Total Revenue"
+            value={formatCurrency(totals.revenue)}
+            subtitle={`From ${totals.purchases} purchases`}
+            change="+24% vs last period ↑"
+            changeColor="text-green-600"
+            icon="💵"
+            bgColor="bg-gradient-to-br from-green-50 to-green-100"
+          />
+          <MetricCard
+            title="ROAS"
+            value={formatROAS(totalROAS)}
+            subtitle="Return on Ad Spend"
+            change="+0.8x vs last period ↑"
+            changeColor="text-green-600"
+            icon="📈"
+            bgColor="bg-gradient-to-br from-purple-50 to-purple-100"
+          />
+          <div className="glass-card p-4">
+            <div className="text-2xl mb-2">👥</div>
+            <p className="text-2xl font-bold text-gray-900">
+              {formatNumber(245678)}
+            </p>
+            <p className="text-sm text-gray-600">Unique users reached</p>
+          </div>
+        </div>
       </div>
 
-      {/* Secondary Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="glass-card p-4">
-          <div className="text-2xl mb-2">👥</div>
-          <p className="text-2xl font-bold text-gray-900">
-            {formatNumber(245678)}
-          </p>
-          <p className="text-sm text-gray-600">Unique users reached</p>
-        </div>
-        <div className="glass-card p-4">
-          <div className="text-2xl mb-2">🖱️</div>
-          <p className="text-2xl font-bold text-gray-900">
-            {formatNumber(12345)}
-          </p>
-          <p className="text-sm text-gray-600">5.02% CTR</p>
-        </div>
-        <div className="glass-card p-4">
-          <div className="text-2xl mb-2">📝</div>
-          <p className="text-2xl font-bold text-gray-900">
-            {formatNumber(totals.leads)}
-          </p>
-          <p className="text-sm text-gray-600">
-            {formatCurrency(totals.spend / totals.leads)} Cost Per Lead
-          </p>
-        </div>
-        <div className="glass-card p-4">
-          <div className="text-2xl mb-2">🛒</div>
-          <p className="text-2xl font-bold text-gray-900">
-            {totals.purchases}
-          </p>
-          <p className="text-sm text-gray-600">
-            {formatPercentage((totals.purchases / totals.leads) * 100)}{' '}
-            conversion rate
-          </p>
+      {/* Engagement & Click Metrics */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">🖱️ Engagement & Click Metrics</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="glass-card p-4">
+            <div className="text-2xl mb-2">🖱️</div>
+            <p className="text-2xl font-bold text-gray-900">
+              {formatNumber(12345)}
+            </p>
+            <p className="text-sm text-gray-600">Total Clicks</p>
+            <p className="text-xs text-gray-500 mt-1">5.02% CTR</p>
+          </div>
+          <div className="glass-card p-4">
+            <div className="text-2xl mb-2">📄</div>
+            <p className="text-2xl font-bold text-gray-900">
+              {formatNumber(totalLandingPageViews)}
+            </p>
+            <p className="text-sm text-gray-600">Landing Page Views</p>
+          </div>
+          <div className="glass-card p-4">
+            <div className="text-2xl mb-2">📊</div>
+            <p className="text-2xl font-bold text-gray-900">
+              {formatPercentage(avgScrollDepth)}
+            </p>
+            <p className="text-sm text-gray-600">Avg Scroll Depth</p>
+          </div>
+          <div className="glass-card p-4">
+            <div className="text-2xl mb-2">⏱️</div>
+            <p className="text-2xl font-bold text-gray-900">
+              {Math.floor(avgTimeOnPage / 60)}m {avgTimeOnPage % 60}s
+            </p>
+            <p className="text-sm text-gray-600">Avg Time on Page</p>
+          </div>
         </div>
       </div>
 
       {/* Video Engagement Metrics */}
-      <div className="glass-card p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">
-          📹 Video Engagement
-        </h2>
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">📹 Video Engagement Metrics</h2>
+        <div className="glass-card p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg">
             <p className="text-sm text-gray-600 mb-1">25% Video Viewers</p>
@@ -225,68 +277,91 @@ const Dashboard = () => {
             <p className="text-xs text-gray-500 mt-1">Watched complete video</p>
           </div>
         </div>
+        </div>
       </div>
 
-      {/* Calls & Webinars */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="glass-card p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">
-            📞 Sales Calls
-          </h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">Calls Booked</p>
-              <p className="text-3xl font-bold text-gray-900">
-                {callStats.booked}
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">Calls Completed</p>
-              <p className="text-3xl font-bold text-gray-900">
-                {callStats.completed}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                {formatPercentage(
-                  (callStats.completed / callStats.booked) * 100
-                )}{' '}
-                completion rate
-              </p>
-            </div>
+      {/* Lead Generation Metrics */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">📝 Lead Generation Metrics</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="glass-card p-4">
+            <div className="text-2xl mb-2">📝</div>
+            <p className="text-2xl font-bold text-gray-900">
+              {formatNumber(totals.leads)}
+            </p>
+            <p className="text-sm text-gray-600">Total Leads Generated</p>
+            <p className="text-xs text-gray-500 mt-1">
+              {formatCurrency(totals.spend / totals.leads)} Cost Per Lead
+            </p>
+          </div>
+          <div className="glass-card p-4">
+            <div className="text-2xl mb-2">📹</div>
+            <p className="text-2xl font-bold text-gray-900">
+              {webinarStats.registrations}
+            </p>
+            <p className="text-sm text-gray-600">Webinars Booked</p>
+          </div>
+          <div className="glass-card p-4">
+            <div className="text-2xl mb-2">📞</div>
+            <p className="text-2xl font-bold text-gray-900">
+              {callStats.booked}
+            </p>
+            <p className="text-sm text-gray-600">Sales Calls Booked</p>
+          </div>
+          <div className="glass-card p-4">
+            <div className="text-2xl mb-2">📱</div>
+            <p className="text-2xl font-bold text-gray-900">
+              +{formatNumber(instagramFollowersGained)}
+            </p>
+            <p className="text-sm text-gray-600">Instagram Followers</p>
           </div>
         </div>
+      </div>
 
+      {/* Sales & Revenue Metrics */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">💰 Sales & Revenue Metrics</h2>
         <div className="glass-card p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">
-            📹 Webinars
-          </h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">Webinars Booked</p>
-              <p className="text-3xl font-bold text-gray-900">
-                {webinarStats.registrations}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-600 mb-1">Total Purchases</p>
+              <p className="text-3xl font-bold text-gray-900">{totals.purchases}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                {formatPercentage((totals.purchases / totals.leads) * 100)} conversion
               </p>
             </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg">
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
               <p className="text-sm text-gray-600 mb-1">Webinars Attended</p>
-              <p className="text-3xl font-bold text-gray-900">
-                {webinarStats.attended}
-              </p>
+              <p className="text-3xl font-bold text-gray-900">{webinarStats.attended}</p>
               <p className="text-xs text-gray-500 mt-1">
                 {formatPercentage(
                   (webinarStats.attended / webinarStats.registrations) * 100
                 )}{' '}
-                show-up rate
+                show-up
+              </p>
+            </div>
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-600 mb-1">Calls Completed</p>
+              <p className="text-3xl font-bold text-gray-900">{callStats.completed}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                {formatPercentage((callStats.completed / callStats.booked) * 100)} completion
+              </p>
+            </div>
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-600 mb-1">Total Revenue</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {formatCurrency(totals.revenue)}
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Sales Funnel Metrics */}
+      {/* Sales Breakdown (L1, L2, L3) */}
       <div className="glass-card p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">
-          💰 Sales Breakdown
-        </h2>
+        <h3 className="text-lg font-bold text-gray-900 mb-4">
+          Sales Tier Breakdown
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-gradient-to-br from-green-50 to-green-100 p-5 rounded-lg">
             <p className="text-sm text-gray-600 mb-2">L1 Sales (Front-End)</p>
@@ -326,32 +401,159 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Engagement Metrics */}
-      <div className="glass-card p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">
-          📊 Engagement Metrics
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-lg">
-            <p className="text-sm text-gray-600 mb-1">Avg Scroll Depth</p>
-            <p className="text-3xl font-bold text-gray-900">
-              {formatPercentage(avgScrollDepth)}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">Across all pages</p>
+      {/* Conversion Funnel Visualization */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">🔄 Conversion Funnel</h2>
+        <div className="glass-card p-8">
+          <div className="space-y-4">
+            {funnelData.map((stage, index) => (
+              <div key={stage.stage} className="relative">
+                <div
+                  className={`bg-gradient-to-r ${stage.color} text-white p-6 rounded-lg shadow-lg transition-all hover:scale-102`}
+                  style={{
+                    width: `${Math.max(20, stage.percentage)}%`,
+                    minWidth: '300px',
+                  }}
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-sm font-medium opacity-90">
+                        {stage.stage}
+                      </p>
+                      <p className="text-3xl font-bold">
+                        {formatNumber(stage.count)}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-bold">
+                        {formatPercentage(stage.percentage)}
+                      </p>
+                      <p className="text-xs opacity-75">
+                        {index > 0 ? `${formatPercentage(stage.count / funnelData[index - 1].count * 100)} of prev` : 'Total'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                {index < funnelData.length - 1 && (
+                  <div className="flex justify-center py-2">
+                    <div className="text-gray-400 text-2xl">↓</div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-          <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-4 rounded-lg">
-            <p className="text-sm text-gray-600 mb-1">Avg Time on Page</p>
-            <p className="text-3xl font-bold text-gray-900">
-              {Math.floor(avgTimeOnPage / 60)}m {avgTimeOnPage % 60}s
-            </p>
-            <p className="text-xs text-gray-500 mt-1">Average session time</p>
-          </div>
-          <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-4 rounded-lg">
-            <p className="text-sm text-gray-600 mb-1">Instagram Followers</p>
-            <p className="text-3xl font-bold text-gray-900">
-              +{formatNumber(instagramFollowersGained)}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">New followers gained</p>
+        </div>
+      </div>
+
+      {/* Attribution Breakdown */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">📈 Attribution Model Breakdown</h2>
+        <div className="glass-card p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* First Click Attribution */}
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border-2 border-blue-200">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">First Click</h3>
+                <span className="px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">
+                  35%
+                </span>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Revenue Attributed</p>
+                  <p className="text-3xl font-bold text-gray-900">
+                    {formatCurrency(attribution.firstClick.revenue)}
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-xs text-gray-600">Conversions</p>
+                    <p className="text-xl font-semibold text-gray-900">
+                      {attribution.firstClick.conversions}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600">Avg Order Value</p>
+                    <p className="text-xl font-semibold text-gray-900">
+                      {formatCurrency(attribution.firstClick.avgOrderValue)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-4">
+                Credits the first touchpoint in the customer journey
+              </p>
+            </div>
+
+            {/* Last Click Attribution */}
+            <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg border-2 border-green-200">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">Last Click</h3>
+                <span className="px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">
+                  45%
+                </span>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Revenue Attributed</p>
+                  <p className="text-3xl font-bold text-gray-900">
+                    {formatCurrency(attribution.lastClick.revenue)}
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-xs text-gray-600">Conversions</p>
+                    <p className="text-xl font-semibold text-gray-900">
+                      {attribution.lastClick.conversions}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600">Avg Order Value</p>
+                    <p className="text-xl font-semibold text-gray-900">
+                      {formatCurrency(attribution.lastClick.avgOrderValue)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-4">
+                Credits the last touchpoint before conversion
+              </p>
+            </div>
+
+            {/* Multi-Touch Attribution */}
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border-2 border-purple-200">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">Multi-Touch</h3>
+                <span className="px-3 py-1 bg-purple-500 text-white text-xs font-semibold rounded-full">
+                  20%
+                </span>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Revenue Attributed</p>
+                  <p className="text-3xl font-bold text-gray-900">
+                    {formatCurrency(attribution.multiTouch.revenue)}
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-xs text-gray-600">Conversions</p>
+                    <p className="text-xl font-semibold text-gray-900">
+                      {attribution.multiTouch.conversions}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600">Avg Order Value</p>
+                    <p className="text-xl font-semibold text-gray-900">
+                      {formatCurrency(attribution.multiTouch.avgOrderValue)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-4">
+                Distributed credit across all customer touchpoints
+              </p>
+            </div>
           </div>
         </div>
       </div>
