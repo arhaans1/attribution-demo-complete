@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { MetricCard } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
-import { campaigns } from '../data/dummyData';
+import { campaigns, webinars, closers } from '../data/dummyData';
 import {
   formatCurrency,
   formatNumber,
@@ -29,6 +29,67 @@ const Dashboard = () => {
 
   const totalROAS = totals.revenue / totals.spend;
   const spendWithGST = totals.spend * 1.18;
+
+  // Calculate video engagement metrics
+  const videoEngagement = campaigns.reduce(
+    (acc, campaign) => {
+      campaign.adSets.forEach((adSet) => {
+        adSet.ads.forEach((ad) => {
+          if (ad.videoViewsBreakdown) {
+            acc.viewers25 += ad.videoViewsBreakdown.twentyFive;
+            acc.viewers50 += ad.videoViewsBreakdown.fifty;
+            acc.viewers100 += ad.videoViewsBreakdown.hundred;
+          }
+        });
+      });
+      return acc;
+    },
+    { viewers25: 0, viewers50: 0, viewers100: 0 }
+  );
+
+  // Calculate webinar stats
+  const webinarStats = webinars.reduce(
+    (acc, webinar) => ({
+      registrations: acc.registrations + webinar.registrations,
+      attended: acc.attended + webinar.showUps,
+      l1Sales: acc.l1Sales + webinar.l1Conversions,
+      l1Revenue: acc.l1Revenue + webinar.l1Revenue,
+    }),
+    { registrations: 0, attended: 0, l1Sales: 0, l1Revenue: 0 }
+  );
+
+  // Calculate sales call stats
+  const callStats = closers.reduce(
+    (acc, closer) => ({
+      booked: acc.booked + closer.appointments,
+      completed: acc.completed + closer.callsCompleted,
+      sales: acc.sales + closer.purchases,
+      revenue: acc.revenue + closer.totalRevenue,
+    }),
+    { booked: 0, completed: 0, sales: 0, revenue: 0 }
+  );
+
+  // Mock data for additional metrics
+  const l2Sales = 18; // High-ticket sales from webinars
+  const l2Revenue = 882000;
+  const l3Sales = 5; // Upsells/additional sales
+  const l3Revenue = 245000;
+  const avgScrollDepth = 68.5;
+  const avgTimeOnPage = 142; // in seconds
+  const instagramFollowersGained = 1247;
+
+  // Calculate ad creative performance
+  const adCreatives = campaigns.flatMap((campaign) =>
+    campaign.adSets.flatMap((adSet) =>
+      adSet.ads.map((ad) => ({
+        ...ad,
+        campaignName: campaign.name,
+        adSetName: adSet.name,
+        costPerLead: ad.leads > 0 ? ad.spend / ad.leads : 0,
+        costPerSale: ad.purchases > 0 ? ad.spend / ad.purchases : 0,
+      }))
+    )
+  );
 
   const toggleCampaign = (campaignId: string) => {
     const newExpanded = new Set(expandedCampaigns);
@@ -134,25 +195,245 @@ const Dashboard = () => {
             conversion rate
           </p>
         </div>
-        <div className="glass-card p-4">
-          <div className="text-2xl mb-2">📹</div>
-          <p className="text-2xl font-bold text-gray-900">342</p>
-          <p className="text-sm text-gray-600">Webinar Registrations</p>
+      </div>
+
+      {/* Video Engagement Metrics */}
+      <div className="glass-card p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">
+          📹 Video Engagement
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg">
+            <p className="text-sm text-gray-600 mb-1">25% Video Viewers</p>
+            <p className="text-3xl font-bold text-gray-900">
+              {formatNumber(videoEngagement.viewers25)}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">Watched 25% or more</p>
+          </div>
+          <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg">
+            <p className="text-sm text-gray-600 mb-1">50% Video Viewers</p>
+            <p className="text-3xl font-bold text-gray-900">
+              {formatNumber(videoEngagement.viewers50)}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">Watched 50% or more</p>
+          </div>
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg">
+            <p className="text-sm text-gray-600 mb-1">100% Video Viewers</p>
+            <p className="text-3xl font-bold text-gray-900">
+              {formatNumber(videoEngagement.viewers100)}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">Watched complete video</p>
+          </div>
         </div>
-        <div className="glass-card p-4">
-          <div className="text-2xl mb-2">✅</div>
-          <p className="text-2xl font-bold text-gray-900">198</p>
-          <p className="text-sm text-gray-600">57.9% show-up rate</p>
+      </div>
+
+      {/* Calls & Webinars */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="glass-card p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">
+            📞 Sales Calls
+          </h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg">
+              <p className="text-sm text-gray-600 mb-1">Calls Booked</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {callStats.booked}
+              </p>
+            </div>
+            <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg">
+              <p className="text-sm text-gray-600 mb-1">Calls Completed</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {callStats.completed}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                {formatPercentage(
+                  (callStats.completed / callStats.booked) * 100
+                )}{' '}
+                completion rate
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="glass-card p-4">
-          <div className="text-2xl mb-2">📞</div>
-          <p className="text-2xl font-bold text-gray-900">89</p>
-          <p className="text-sm text-gray-600">Sales Calls Booked</p>
+
+        <div className="glass-card p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">
+            📹 Webinars
+          </h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-lg">
+              <p className="text-sm text-gray-600 mb-1">Webinars Booked</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {webinarStats.registrations}
+              </p>
+            </div>
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg">
+              <p className="text-sm text-gray-600 mb-1">Webinars Attended</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {webinarStats.attended}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                {formatPercentage(
+                  (webinarStats.attended / webinarStats.registrations) * 100
+                )}{' '}
+                show-up rate
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="glass-card p-4">
-          <div className="text-2xl mb-2">💎</div>
-          <p className="text-2xl font-bold text-gray-900">37</p>
-          <p className="text-sm text-gray-600">41.6% close rate</p>
+      </div>
+
+      {/* Sales Funnel Metrics */}
+      <div className="glass-card p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">
+          💰 Sales Breakdown
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-gradient-to-br from-green-50 to-green-100 p-5 rounded-lg">
+            <p className="text-sm text-gray-600 mb-2">L1 Sales (Front-End)</p>
+            <p className="text-4xl font-bold text-gray-900 mb-2">
+              {webinarStats.l1Sales}
+            </p>
+            <p className="text-lg font-semibold text-green-600 mb-1">
+              {formatCurrency(webinarStats.l1Revenue)}
+            </p>
+            <p className="text-sm text-gray-600">
+              Cost per L1:{' '}
+              {formatCurrency(totals.spend / webinarStats.l1Sales)}
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-5 rounded-lg">
+            <p className="text-sm text-gray-600 mb-2">L2 Sales (High-Ticket)</p>
+            <p className="text-4xl font-bold text-gray-900 mb-2">{l2Sales}</p>
+            <p className="text-lg font-semibold text-blue-600 mb-1">
+              {formatCurrency(l2Revenue)}
+            </p>
+            <p className="text-sm text-gray-600">
+              Cost per L2: {formatCurrency(totals.spend / l2Sales)}
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-lg">
+            <p className="text-sm text-gray-600 mb-2">L3 Sales (Upsells)</p>
+            <p className="text-4xl font-bold text-gray-900 mb-2">{l3Sales}</p>
+            <p className="text-lg font-semibold text-purple-600 mb-1">
+              {formatCurrency(l3Revenue)}
+            </p>
+            <p className="text-sm text-gray-600">
+              Cost per L3: {formatCurrency(totals.spend / l3Sales)}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Engagement Metrics */}
+      <div className="glass-card p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">
+          📊 Engagement Metrics
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-lg">
+            <p className="text-sm text-gray-600 mb-1">Avg Scroll Depth</p>
+            <p className="text-3xl font-bold text-gray-900">
+              {formatPercentage(avgScrollDepth)}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">Across all pages</p>
+          </div>
+          <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-4 rounded-lg">
+            <p className="text-sm text-gray-600 mb-1">Avg Time on Page</p>
+            <p className="text-3xl font-bold text-gray-900">
+              {Math.floor(avgTimeOnPage / 60)}m {avgTimeOnPage % 60}s
+            </p>
+            <p className="text-xs text-gray-500 mt-1">Average session time</p>
+          </div>
+          <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-4 rounded-lg">
+            <p className="text-sm text-gray-600 mb-1">Instagram Followers</p>
+            <p className="text-3xl font-bold text-gray-900">
+              +{formatNumber(instagramFollowersGained)}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">New followers gained</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Ad Creative Performance */}
+      <div className="glass-card p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-6">
+          🎨 Ad Creative Performance Breakdown
+        </h2>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-gray-200">
+                <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                  Creative
+                </th>
+                <th className="text-right py-3 px-4 font-semibold text-gray-700">
+                  Spend
+                </th>
+                <th className="text-right py-3 px-4 font-semibold text-gray-700">
+                  Leads
+                </th>
+                <th className="text-right py-3 px-4 font-semibold text-gray-700">
+                  Cost Per Lead
+                </th>
+                <th className="text-right py-3 px-4 font-semibold text-gray-700">
+                  Sales
+                </th>
+                <th className="text-right py-3 px-4 font-semibold text-gray-700">
+                  Cost Per Sale
+                </th>
+                <th className="text-right py-3 px-4 font-semibold text-gray-700">
+                  ROAS
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {adCreatives.map((creative) => (
+                <tr
+                  key={creative.id}
+                  className="border-b border-gray-100 hover:bg-gray-50"
+                >
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={creative.thumbnail}
+                        alt={creative.name}
+                        className="w-16 h-16 rounded object-cover shadow-sm"
+                      />
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {creative.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {creative.campaignName}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="text-right py-3 px-4">
+                    {formatCurrency(creative.spend)}
+                  </td>
+                  <td className="text-right py-3 px-4">{creative.leads}</td>
+                  <td className="text-right py-3 px-4">
+                    {formatCurrency(creative.costPerLead)}
+                  </td>
+                  <td className="text-right py-3 px-4">
+                    {creative.purchases}
+                  </td>
+                  <td className="text-right py-3 px-4">
+                    {creative.purchases > 0
+                      ? formatCurrency(creative.costPerSale)
+                      : '-'}
+                  </td>
+                  <td className="text-right py-3 px-4 font-semibold text-green-600">
+                    {formatROAS(creative.roas)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
