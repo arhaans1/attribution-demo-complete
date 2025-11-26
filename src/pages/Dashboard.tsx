@@ -109,7 +109,7 @@ const Dashboard = () => {
   const funnelData = [
     { stage: 'Ad Views', count: totalImpressions, percentage: 100, color: 'from-blue-500 to-blue-600' },
     { stage: 'Landing Page Visitors', count: totalLandingPageViews, percentage: (totalLandingPageViews / totalImpressions) * 100, color: 'from-indigo-500 to-indigo-600' },
-    { stage: 'Leads Generated', count: totals.leads, percentage: (totals.leads / totalImpressions) * 100, color: 'from-purple-600 to-purple-700' },
+    { stage: 'Leads Generated', count: totals.leads, percentage: (totals.leads / totalImpressions) * 100, color: 'from-violet-600 to-violet-700' },
     { stage: 'Webinar/Call Attended', count: webinarStats.attended + callStats.completed, percentage: ((webinarStats.attended + callStats.completed) / totals.leads) * 100, color: 'from-pink-500 to-pink-600' },
     { stage: 'L1 Conversions', count: webinarStats.l1Sales, percentage: (webinarStats.l1Sales / (webinarStats.attended + callStats.completed)) * 100, color: 'from-orange-500 to-orange-600' },
     { stage: 'L2 Webinar/Call', count: callStats.completed, percentage: (callStats.completed / webinarStats.l1Sales) * 100, color: 'from-amber-500 to-amber-600' },
