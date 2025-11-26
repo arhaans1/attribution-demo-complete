@@ -156,7 +156,10 @@ const Dashboard = () => {
 
       {/* Campaign Overview */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">📊 Campaign Overview</h2>
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">Campaign Overview</h2>
+          <div className="h-px bg-gradient-to-r from-gray-300 to-transparent mt-2"></div>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <MetricCard
             title="Ad Spend"
@@ -186,54 +189,55 @@ const Dashboard = () => {
             bgColor="bg-gradient-to-br from-purple-50 to-purple-100"
           />
           <div className="glass-card p-4">
-            <div className="text-2xl mb-2">👥</div>
             <p className="text-2xl font-bold text-gray-900">
               {formatNumber(245678)}
             </p>
-            <p className="text-sm text-gray-600">Unique users reached</p>
+            <p className="text-sm text-gray-600 mt-1">Unique users reached</p>
           </div>
         </div>
       </div>
 
       {/* Engagement & Click Metrics */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">🖱️ Engagement & Click Metrics</h2>
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">Engagement & Click Metrics</h2>
+          <div className="h-px bg-gradient-to-r from-gray-300 to-transparent mt-2"></div>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="glass-card p-4">
-            <div className="text-2xl mb-2">🖱️</div>
+            <p className="text-sm text-gray-600 mb-2">Total Clicks</p>
             <p className="text-2xl font-bold text-gray-900">
               {formatNumber(12345)}
             </p>
-            <p className="text-sm text-gray-600">Total Clicks</p>
             <p className="text-xs text-gray-500 mt-1">5.02% CTR</p>
           </div>
           <div className="glass-card p-4">
-            <div className="text-2xl mb-2">📄</div>
+            <p className="text-sm text-gray-600 mb-2">Landing Page Views</p>
             <p className="text-2xl font-bold text-gray-900">
               {formatNumber(totalLandingPageViews)}
             </p>
-            <p className="text-sm text-gray-600">Landing Page Views</p>
           </div>
           <div className="glass-card p-4">
-            <div className="text-2xl mb-2">📊</div>
+            <p className="text-sm text-gray-600 mb-2">Avg Scroll Depth</p>
             <p className="text-2xl font-bold text-gray-900">
               {formatPercentage(avgScrollDepth)}
             </p>
-            <p className="text-sm text-gray-600">Avg Scroll Depth</p>
           </div>
           <div className="glass-card p-4">
-            <div className="text-2xl mb-2">⏱️</div>
+            <p className="text-sm text-gray-600 mb-2">Avg Time on Page</p>
             <p className="text-2xl font-bold text-gray-900">
               {Math.floor(avgTimeOnPage / 60)}m {avgTimeOnPage % 60}s
             </p>
-            <p className="text-sm text-gray-600">Avg Time on Page</p>
           </div>
         </div>
       </div>
 
       {/* Video Engagement Metrics */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">📹 Video Engagement Metrics</h2>
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">Video Engagement Metrics</h2>
+          <div className="h-px bg-gradient-to-r from-gray-300 to-transparent mt-2"></div>
+        </div>
         <div className="glass-card p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg">
@@ -263,45 +267,47 @@ const Dashboard = () => {
 
       {/* Lead Generation Metrics */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">📝 Lead Generation Metrics</h2>
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">Lead Generation Metrics</h2>
+          <div className="h-px bg-gradient-to-r from-gray-300 to-transparent mt-2"></div>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="glass-card p-4">
-            <div className="text-2xl mb-2">📝</div>
+            <p className="text-sm text-gray-600 mb-2">Total Leads Generated</p>
             <p className="text-2xl font-bold text-gray-900">
               {formatNumber(totals.leads)}
             </p>
-            <p className="text-sm text-gray-600">Total Leads Generated</p>
             <p className="text-xs text-gray-500 mt-1">
               {formatCurrency(totals.spend / totals.leads)} Cost Per Lead
             </p>
           </div>
           <div className="glass-card p-4">
-            <div className="text-2xl mb-2">📹</div>
+            <p className="text-sm text-gray-600 mb-2">Webinars Booked</p>
             <p className="text-2xl font-bold text-gray-900">
               {webinarStats.registrations}
             </p>
-            <p className="text-sm text-gray-600">Webinars Booked</p>
           </div>
           <div className="glass-card p-4">
-            <div className="text-2xl mb-2">📞</div>
+            <p className="text-sm text-gray-600 mb-2">Sales Calls Booked</p>
             <p className="text-2xl font-bold text-gray-900">
               {callStats.booked}
             </p>
-            <p className="text-sm text-gray-600">Sales Calls Booked</p>
           </div>
           <div className="glass-card p-4">
-            <div className="text-2xl mb-2">📱</div>
+            <p className="text-sm text-gray-600 mb-2">Instagram Followers</p>
             <p className="text-2xl font-bold text-gray-900">
               +{formatNumber(instagramFollowersGained)}
             </p>
-            <p className="text-sm text-gray-600">Instagram Followers</p>
           </div>
         </div>
       </div>
 
       {/* Sales & Revenue Metrics */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">💰 Sales & Revenue Metrics</h2>
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">Sales & Revenue Metrics</h2>
+          <div className="h-px bg-gradient-to-r from-gray-300 to-transparent mt-2"></div>
+        </div>
         <div className="glass-card p-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-white p-4 rounded-lg border border-gray-200">
@@ -384,7 +390,10 @@ const Dashboard = () => {
 
       {/* Conversion Funnel Visualization */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">🔄 Conversion Funnel</h2>
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">Conversion Funnel</h2>
+          <div className="h-px bg-gradient-to-r from-gray-300 to-transparent mt-2"></div>
+        </div>
         <div className="glass-card p-6">
           <div className="space-y-3 max-w-full">
             {funnelData.map((stage, index) => {
@@ -431,10 +440,12 @@ const Dashboard = () => {
       </div>
 
       {/* Ad Creative Performance */}
-      <div className="glass-card p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">
-          🎨 Ad Creative Performance Breakdown
-        </h2>
+      <div>
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">Ad Creative Performance</h2>
+          <div className="h-px bg-gradient-to-r from-gray-300 to-transparent mt-2"></div>
+        </div>
+        <div className="glass-card p-6">
 
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -509,13 +520,16 @@ const Dashboard = () => {
             </tbody>
           </table>
         </div>
+        </div>
       </div>
 
       {/* Campaign Performance Section */}
-      <div className="glass-card p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">
-          Campaign Performance Breakdown
-        </h2>
+      <div>
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">Campaign Performance Breakdown</h2>
+          <div className="h-px bg-gradient-to-r from-gray-300 to-transparent mt-2"></div>
+        </div>
+        <div className="glass-card p-6">
 
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -695,6 +709,7 @@ const Dashboard = () => {
               ))}
             </tbody>
           </table>
+        </div>
         </div>
       </div>
     </div>
