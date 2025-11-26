@@ -17,7 +17,7 @@ const Integrations = () => {
       id: 'ghl',
       name: 'GoHighLevel',
       description: 'Connect your CRM for lead tracking and opportunity management',
-      logoUrl: 'https://images.leadconnectorhq.com/image/fetch/f_webp,q_80,w_400,h_400,c_fit/https://assets.cdn.filesafe.space/zApwPKf44RfSmZr4TUZK/media/659e2b2abbb9a76d6bc62d8e.png',
+      logoUrl: 'https://cdn.prod.website-files.com/62f89e8c1c557a04272f04fb/62f89e8c1c557aba432f0548_ghl-icon.svg',
       logoColor: '#00A652',
       status: 'connected',
       account: 'ASR Media Pro CRM - Main Location',
@@ -28,7 +28,7 @@ const Integrations = () => {
       id: 'zoom',
       name: 'Zoom',
       description: 'Track webinar attendance and engagement metrics',
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Zoom_Logo.png',
+      logoUrl: 'https://st1.zoom.us/static/6.3.21315/image/new/ZoomLogo.png',
       logoColor: '#2D8CFF',
       status: 'connected',
       account: 'asr.mediapro@gmail.com',
@@ -85,7 +85,7 @@ const Integrations = () => {
         {integrations.map((integration) => (
           <div
             key={integration.id}
-            className={`glass-card p-6 transition-all hover:shadow-lg ${
+            className={`glass-card p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] cursor-pointer ${
               integration.status === 'coming_soon' ? 'opacity-60' : ''
             }`}
           >
