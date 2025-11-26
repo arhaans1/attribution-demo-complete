@@ -8,16 +8,21 @@ const AIInsights = () => {
   const demoMessages = [
     {
       type: 'ai',
-      content: "👋 Hi! I'm your AI marketing assistant. I've analyzed your campaigns and funnel performance. Here's what I found:",
+      content: "Hey! I just analyzed your campaigns. Found some interesting patterns you should know about.",
       timestamp: '10:30 AM',
     },
     {
       type: 'ai',
-      content: `📊 **Campaign Performance Insights:**
-
-• Your "High-Ticket Coaching Webinar - Oct 2025" campaign is performing exceptionally well with 3.97x ROAS
-• The "Webinar Invitation - Video Ad" has the highest ROAS (4.71x) and should be scaled
-• However, I noticed the "Retargeting - Abandoned Leads" campaign has lower spend but strong 4.22x ROAS - this is an opportunity`,
+      content: (
+        <div className="space-y-3">
+          <p className="font-semibold text-gray-900">Quick Overview:</p>
+          <ul className="space-y-2 text-gray-700">
+            <li>• Your High-Ticket Coaching campaign is crushing it at 3.97x ROAS</li>
+            <li>• Video ads are outperforming everything else by a solid margin</li>
+            <li>• Found an underutilized opportunity in your retargeting campaign</li>
+          </ul>
+        </div>
+      ),
       timestamp: '10:30 AM',
     },
     {
@@ -27,21 +32,26 @@ const AIInsights = () => {
     },
     {
       type: 'ai',
-      content: `🔍 **Funnel Analysis:**
+      content: (
+        <div className="space-y-4">
+          <p>Spotted three areas that need attention:</p>
 
-I've identified key drop-off points in your funnel:
+          <div className="bg-red-50 border-l-4 border-red-400 p-3 rounded">
+            <p className="font-semibold text-red-900">Landing Page Conversion</p>
+            <p className="text-sm text-red-700 mt-1">Only 4.6% converting (should be 8-12%). Your page might be too long or CTA isn't clear enough.</p>
+          </div>
 
-1. **Landing Page → Leads:** Only 4.6% conversion (487 leads from 10,475 visitors)
-   - This is below industry average of 8-12%
-   - Consider A/B testing your landing page copy and CTA placement
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
+            <p className="font-semibold text-yellow-900">Webinar Show-ups</p>
+            <p className="text-sm text-yellow-700 mt-1">54% attendance is okay, but you could hit 65%+ with SMS reminders 1 hour before.</p>
+          </div>
 
-2. **Webinar Registration → Show-up:** 54.4% attendance rate
-   - Good, but could be improved to 65%+ with better reminder sequences
-   - Add SMS reminders 1 hour before webinar
-
-3. **L1 → L2 Conversion:** Only 67 completed calls from 44 L1 sales
-   - This 152% ratio means you're getting more calls than expected
-   - The bottleneck is L2 conversion (26.9%) - focus on closer training`,
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
+            <p className="font-semibold text-blue-900">L2 Close Rate</p>
+            <p className="text-sm text-blue-700 mt-1">26.9% is below the 35-40% benchmark. Might be worth doing some objection handling training with your closers.</p>
+          </div>
+        </div>
+      ),
       timestamp: '10:33 AM',
     },
     {
@@ -51,34 +61,45 @@ I've identified key drop-off points in your funnel:
     },
     {
       type: 'ai',
-      content: `💡 **Immediate Action Plan:**
+      content: (
+        <div className="space-y-4">
+          <div>
+            <p className="font-semibold text-gray-900 mb-2">Do these today:</p>
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <span className="text-green-600 font-bold">1.</span>
+                <div>
+                  <p className="text-gray-900">Scale your video webinar ad by 50%</p>
+                  <p className="text-sm text-gray-600">₹52K → ₹78K/day. Should bring in ~₹1.2L extra revenue</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <span className="text-red-600 font-bold">2.</span>
+                <div>
+                  <p className="text-gray-900">Pause "Social Proof Carousel"</p>
+                  <p className="text-sm text-gray-600">3.50x ROAS is dragging down your average. Move budget to winners</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <span className="text-blue-600 font-bold">3.</span>
+                <div>
+                  <p className="text-gray-900">Double retargeting budget</p>
+                  <p className="text-sm text-gray-600">4.22x ROAS with only ₹1.2L spend? This is low hanging fruit</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-**HIGH PRIORITY - Do Today:**
-1. ✅ Duplicate "Webinar Invitation - Video Ad" and increase budget by 50%
-   - Current spend: ₹52,000 → Recommended: ₹78,000
-   - Expected additional revenue: ₹122,500
-
-2. ⚠️ Pause "Social Proof - Testimonial Carousel" (₹42,000 spend, 3.50x ROAS)
-   - It's underperforming compared to video ads
-   - Reallocate budget to top performers
-
-3. 📈 Scale "Retargeting - Abandoned Leads" campaign by 2x
-   - Currently only ₹122K spend with 4.22x ROAS
-   - This is your most efficient spend
-
-**MEDIUM PRIORITY - This Week:**
-4. 🎯 Create lookalike audience from your 18 L2 buyers
-   - These are your highest value customers
-   - Target similar profiles for better quality leads
-
-5. 📧 Set up automated SMS reminder 1hr before webinars
-   - Can improve show-up rate from 54% to 65%+
-   - Expected: +89 additional attendees per webinar
-
-6. 🎓 Schedule training for closers on objection handling
-   - Current L2 close rate: 26.9%
-   - Industry benchmark: 35-40%
-   - Potential additional revenue: ₹291,060/month`,
+          <div>
+            <p className="font-semibold text-gray-900 mb-2">This week:</p>
+            <ul className="space-y-1.5 text-sm text-gray-700">
+              <li>• Create lookalike audience from your 18 L2 buyers</li>
+              <li>• Set up SMS reminders for webinars (should add ~89 attendees)</li>
+              <li>• Schedule training session for closers on handling objections</li>
+            </ul>
+          </div>
+        </div>
+      ),
       timestamp: '10:36 AM',
     },
     {
@@ -88,29 +109,86 @@ I've identified key drop-off points in your funnel:
     },
     {
       type: 'ai',
-      content: `🎨 **Creative Performance Ranking:**
+      content: (
+        <div className="space-y-4">
+          <p className="font-semibold text-gray-900">Here's your creative leaderboard:</p>
 
-**TOP PERFORMERS (Scale These):**
-1. 🥇 "Webinar Invitation - Video Ad" - 4.71x ROAS, 5.2% CTR
-   - Why it works: Video format, clear value prop
-   - Action: Duplicate with slight variations
+          <div className="space-y-3">
+            {/* Top Performer */}
+            <div className="flex gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+              <img
+                src="https://placehold.co/80x80/3b82f6/white?text=Video+Ad"
+                alt="Video Ad"
+                className="w-20 h-20 rounded object-cover flex-shrink-0"
+              />
+              <div className="flex-1">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="font-semibold text-gray-900">Webinar Invitation - Video Ad</p>
+                  <span className="px-2 py-0.5 bg-green-600 text-white text-xs font-semibold rounded">TOP</span>
+                </div>
+                <p className="text-sm text-gray-700 mt-1"><span className="font-semibold">4.71x ROAS</span> • 5.2% CTR</p>
+                <p className="text-sm text-green-700 mt-1">→ Duplicate this and test slight variations</p>
+              </div>
+            </div>
 
-2. 🥈 "Course Promo - Image Ad" - 4.71x ROAS, 4.54% CTR
-   - Strong performer in cold audience
-   - Action: Increase daily budget by 40%
+            {/* Second Place */}
+            <div className="flex gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <img
+                src="https://placehold.co/80x80/10b981/white?text=Course"
+                alt="Course Ad"
+                className="w-20 h-20 rounded object-cover flex-shrink-0"
+              />
+              <div className="flex-1">
+                <p className="font-semibold text-gray-900">Course Promo - Image Ad</p>
+                <p className="text-sm text-gray-700 mt-1"><span className="font-semibold">4.71x ROAS</span> • 4.54% CTR</p>
+                <p className="text-sm text-blue-700 mt-1">→ Increase daily budget by 40%</p>
+              </div>
+            </div>
 
-3. 🥉 "Special Offer - Book Now" - 5.16x ROAS (Retargeting)
-   - Highest ROAS but low volume
-   - Action: Expand retargeting audience
+            {/* Third Place */}
+            <div className="flex gap-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+              <img
+                src="https://placehold.co/80x80/a855f7/white?text=Offer"
+                alt="Special Offer"
+                className="w-20 h-20 rounded object-cover flex-shrink-0"
+              />
+              <div className="flex-1">
+                <p className="font-semibold text-gray-900">Special Offer - Book Now</p>
+                <p className="text-sm text-gray-700 mt-1"><span className="font-semibold">5.16x ROAS</span> (Retargeting)</p>
+                <p className="text-sm text-purple-700 mt-1">→ Best ROAS but low volume. Expand audience</p>
+              </div>
+            </div>
+          </div>
 
-**UNDERPERFORMERS (Optimize or Pause):**
-❌ "Webinar Invitation - Carousel Ad" - 3.42x ROAS
-   - 17% lower ROAS than video version
-   - Action: Test new carousel slides or pause
-
-⚠️ "Social Proof - Testimonial Carousel" - 3.50x ROAS
-   - Not resonating with warm audience
-   - Action: Refresh testimonials or switch format`,
+          <div className="border-t border-gray-200 pt-3 mt-3">
+            <p className="text-sm font-semibold text-gray-700 mb-2">Not performing well:</p>
+            <div className="space-y-2">
+              <div className="flex gap-3 p-2 bg-gray-50 rounded">
+                <img
+                  src="https://placehold.co/60x60/10b981/white?text=Carousel"
+                  alt="Carousel"
+                  className="w-16 h-16 rounded object-cover flex-shrink-0"
+                />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900">Webinar Carousel</p>
+                  <p className="text-xs text-gray-600">3.42x ROAS - 17% worse than video version</p>
+                </div>
+              </div>
+              <div className="flex gap-3 p-2 bg-gray-50 rounded">
+                <img
+                  src="https://placehold.co/60x60/a855f7/white?text=Testimonial"
+                  alt="Testimonial"
+                  className="w-16 h-16 rounded object-cover flex-shrink-0"
+                />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900">Social Proof Carousel</p>
+                  <p className="text-xs text-gray-600">3.50x ROAS - Consider pausing</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
       timestamp: '10:38 AM',
     },
   ];
