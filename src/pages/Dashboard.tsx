@@ -91,7 +91,7 @@ const Dashboard = () => {
     )
   );
 
-  // Calculate attribution breakdown
+  // Calculate totals for funnel
   const totalImpressions = campaigns.reduce((acc, c) => acc + c.impressions, 0);
   const totalLandingPageViews = campaigns.reduce(
     (acc, campaign) =>
@@ -105,33 +105,14 @@ const Dashboard = () => {
     0
   );
 
-  // Attribution models (based on total revenue)
-  const attribution = {
-    firstClick: {
-      revenue: totals.revenue * 0.35, // 35% attributed to first click
-      conversions: Math.round(totals.purchases * 0.35),
-      avgOrderValue: (totals.revenue * 0.35) / Math.round(totals.purchases * 0.35),
-    },
-    lastClick: {
-      revenue: totals.revenue * 0.45, // 45% attributed to last click
-      conversions: Math.round(totals.purchases * 0.45),
-      avgOrderValue: (totals.revenue * 0.45) / Math.round(totals.purchases * 0.45),
-    },
-    multiTouch: {
-      revenue: totals.revenue * 0.2, // 20% distributed across journey
-      conversions: Math.round(totals.purchases * 0.2),
-      avgOrderValue: (totals.revenue * 0.2) / Math.round(totals.purchases * 0.2),
-    },
-  };
-
   // Funnel data
   const funnelData = [
     { stage: 'Ad Views', count: totalImpressions, percentage: 100, color: 'from-blue-500 to-blue-600' },
     { stage: 'Landing Page Visitors', count: totalLandingPageViews, percentage: (totalLandingPageViews / totalImpressions) * 100, color: 'from-indigo-500 to-indigo-600' },
-    { stage: 'Leads Generated', count: totals.leads, percentage: (totals.leads / totalImpressions) * 100, color: 'from-purple-500 to-purple-600' },
+    { stage: 'Leads Generated', count: totals.leads, percentage: (totals.leads / totalImpressions) * 100, color: 'from-purple-600 to-purple-700' },
     { stage: 'Webinar/Call Attended', count: webinarStats.attended + callStats.completed, percentage: ((webinarStats.attended + callStats.completed) / totals.leads) * 100, color: 'from-pink-500 to-pink-600' },
     { stage: 'L1 Conversions', count: webinarStats.l1Sales, percentage: (webinarStats.l1Sales / (webinarStats.attended + callStats.completed)) * 100, color: 'from-orange-500 to-orange-600' },
-    { stage: 'L2 Webinar/Call', count: callStats.completed, percentage: (callStats.completed / webinarStats.l1Sales) * 100, color: 'from-yellow-500 to-yellow-600' },
+    { stage: 'L2 Webinar/Call', count: callStats.completed, percentage: (callStats.completed / webinarStats.l1Sales) * 100, color: 'from-amber-500 to-amber-600' },
     { stage: 'L2 Conversions', count: l2Sales, percentage: (l2Sales / callStats.completed) * 100, color: 'from-green-500 to-green-600' },
   ];
 
@@ -404,156 +385,47 @@ const Dashboard = () => {
       {/* Conversion Funnel Visualization */}
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-4">🔄 Conversion Funnel</h2>
-        <div className="glass-card p-8">
-          <div className="space-y-4">
-            {funnelData.map((stage, index) => (
-              <div key={stage.stage} className="relative">
-                <div
-                  className={`bg-gradient-to-r ${stage.color} text-white p-6 rounded-lg shadow-lg transition-all hover:scale-102`}
-                  style={{
-                    width: `${Math.max(20, stage.percentage)}%`,
-                    minWidth: '300px',
-                  }}
-                >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-sm font-medium opacity-90">
-                        {stage.stage}
-                      </p>
-                      <p className="text-3xl font-bold">
-                        {formatNumber(stage.count)}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold">
-                        {formatPercentage(stage.percentage)}
-                      </p>
-                      <p className="text-xs opacity-75">
-                        {index > 0 ? `${formatPercentage(stage.count / funnelData[index - 1].count * 100)} of prev` : 'Total'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                {index < funnelData.length - 1 && (
-                  <div className="flex justify-center py-2">
-                    <div className="text-gray-400 text-2xl">↓</div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Attribution Breakdown */}
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">📈 Attribution Model Breakdown</h2>
         <div className="glass-card p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* First Click Attribution */}
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border-2 border-blue-200">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-gray-900">First Click</h3>
-                <span className="px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">
-                  35%
-                </span>
-              </div>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Revenue Attributed</p>
-                  <p className="text-3xl font-bold text-gray-900">
-                    {formatCurrency(attribution.firstClick.revenue)}
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <p className="text-xs text-gray-600">Conversions</p>
-                    <p className="text-xl font-semibold text-gray-900">
-                      {attribution.firstClick.conversions}
-                    </p>
+          <div className="space-y-3 max-w-full">
+            {funnelData.map((stage, index) => {
+              // Calculate width as percentage of container, not absolute percentage
+              const widthPercent = 100 - (index * 10); // Each stage gets 10% narrower
+              return (
+                <div key={stage.stage} className="relative w-full">
+                  <div
+                    className={`bg-gradient-to-r ${stage.color} text-white p-4 rounded-lg shadow-md transition-all hover:shadow-lg mx-auto`}
+                    style={{
+                      width: `${widthPercent}%`,
+                      maxWidth: '100%',
+                    }}
+                  >
+                    <div className="flex justify-between items-center gap-4">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium opacity-90 truncate">
+                          {stage.stage}
+                        </p>
+                        <p className="text-2xl md:text-3xl font-bold">
+                          {formatNumber(stage.count)}
+                        </p>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-xl md:text-2xl font-bold">
+                          {formatPercentage(stage.percentage)}
+                        </p>
+                        <p className="text-xs opacity-75">
+                          {index > 0 ? `${formatPercentage((stage.count / funnelData[index - 1].count) * 100)} of prev` : 'Total'}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-gray-600">Avg Order Value</p>
-                    <p className="text-xl font-semibold text-gray-900">
-                      {formatCurrency(attribution.firstClick.avgOrderValue)}
-                    </p>
-                  </div>
+                  {index < funnelData.length - 1 && (
+                    <div className="flex justify-center py-1">
+                      <div className="text-gray-400 text-xl">↓</div>
+                    </div>
+                  )}
                 </div>
-              </div>
-              <p className="text-xs text-gray-500 mt-4">
-                Credits the first touchpoint in the customer journey
-              </p>
-            </div>
-
-            {/* Last Click Attribution */}
-            <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg border-2 border-green-200">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-gray-900">Last Click</h3>
-                <span className="px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">
-                  45%
-                </span>
-              </div>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Revenue Attributed</p>
-                  <p className="text-3xl font-bold text-gray-900">
-                    {formatCurrency(attribution.lastClick.revenue)}
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <p className="text-xs text-gray-600">Conversions</p>
-                    <p className="text-xl font-semibold text-gray-900">
-                      {attribution.lastClick.conversions}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-600">Avg Order Value</p>
-                    <p className="text-xl font-semibold text-gray-900">
-                      {formatCurrency(attribution.lastClick.avgOrderValue)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <p className="text-xs text-gray-500 mt-4">
-                Credits the last touchpoint before conversion
-              </p>
-            </div>
-
-            {/* Multi-Touch Attribution */}
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border-2 border-purple-200">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-gray-900">Multi-Touch</h3>
-                <span className="px-3 py-1 bg-purple-500 text-white text-xs font-semibold rounded-full">
-                  20%
-                </span>
-              </div>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Revenue Attributed</p>
-                  <p className="text-3xl font-bold text-gray-900">
-                    {formatCurrency(attribution.multiTouch.revenue)}
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <p className="text-xs text-gray-600">Conversions</p>
-                    <p className="text-xl font-semibold text-gray-900">
-                      {attribution.multiTouch.conversions}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-600">Avg Order Value</p>
-                    <p className="text-xl font-semibold text-gray-900">
-                      {formatCurrency(attribution.multiTouch.avgOrderValue)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <p className="text-xs text-gray-500 mt-4">
-                Distributed credit across all customer touchpoints
-              </p>
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>
