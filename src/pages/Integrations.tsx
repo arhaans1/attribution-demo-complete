@@ -1,11 +1,13 @@
-import { Badge } from '../components/ui/Badge';
+import { Check, Clock } from 'lucide-react';
 
 const Integrations = () => {
   const integrations = [
     {
       id: 'facebook',
       name: 'Facebook Ads',
-      logo: '📘',
+      description: 'Sync your ad campaigns, performance metrics, and conversions',
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png',
+      logoColor: '#1877F2',
       status: 'connected',
       account: 'ASR Media Pro Ads (Act: 123456789)',
       connectedDate: 'Oct 1, 2025',
@@ -14,7 +16,9 @@ const Integrations = () => {
     {
       id: 'ghl',
       name: 'GoHighLevel',
-      logo: '🟢',
+      description: 'Connect your CRM for lead tracking and opportunity management',
+      logoUrl: 'https://logo.clearbit.com/gohighlevel.com',
+      logoColor: '#00A652',
       status: 'connected',
       account: 'ASR Media Pro CRM - Main Location',
       connectedDate: 'Oct 1, 2025',
@@ -23,7 +27,9 @@ const Integrations = () => {
     {
       id: 'zoom',
       name: 'Zoom',
-      logo: '📹',
+      description: 'Track webinar attendance and engagement metrics',
+      logoUrl: 'https://www.logo.wine/a/logo/Zoom_Video_Communications/Zoom_Video_Communications-Logo.wine.svg',
+      logoColor: '#2D8CFF',
       status: 'connected',
       account: 'asr.mediapro@gmail.com',
       connectedDate: 'Oct 1, 2025',
@@ -32,7 +38,9 @@ const Integrations = () => {
     {
       id: 'razorpay',
       name: 'Razorpay',
-      logo: '💳',
+      description: 'Monitor payments and transaction revenue',
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Razorpay_logo.svg',
+      logoColor: '#0C2451',
       status: 'connected',
       account: 'ASR Media Pro',
       connectedDate: 'Oct 1, 2025',
@@ -41,7 +49,9 @@ const Integrations = () => {
     {
       id: 'ga',
       name: 'Google Analytics',
-      logo: '📊',
+      description: 'Track website traffic and user behavior',
+      logoUrl: 'https://www.gstatic.com/analytics-suite/header/suite/v2/ic_analytics.svg',
+      logoColor: '#F9AB00',
       status: 'coming_soon',
       account: '',
       connectedDate: '',
@@ -50,7 +60,9 @@ const Integrations = () => {
     {
       id: 'stripe',
       name: 'Stripe',
-      logo: '💜',
+      description: 'Connect your payment gateway for revenue tracking',
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg',
+      logoColor: '#635BFF',
       status: 'coming_soon',
       account: '',
       connectedDate: '',
@@ -62,72 +74,124 @@ const Integrations = () => {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Integrations</h1>
-        <p className="text-gray-600 mt-1">
-          Connect your marketing tools and platforms
+        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Integrations</h1>
+        <p className="text-gray-600 mt-2">
+          Connect your marketing tools and platforms to centralize your attribution data
         </p>
       </div>
 
       {/* Integration Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {integrations.map((integration) => (
-          <div key={integration.id} className="glass-card p-6">
-            <div className="flex items-start gap-4">
-              <div className="text-5xl">{integration.logo}</div>
-              <div className="flex-1">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900">
+          <div
+            key={integration.id}
+            className={`glass-card p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] cursor-pointer ${
+              integration.status === 'coming_soon' ? 'opacity-60' : ''
+            }`}
+          >
+            <div className="flex items-start gap-6">
+              {/* Logo */}
+              <div className="flex-shrink-0">
+                <div className="w-14 h-14 rounded-xl bg-white border border-gray-200 flex items-center justify-center p-2 shadow-sm">
+                  <img
+                    src={integration.logoUrl}
+                    alt={`${integration.name} logo`}
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      // Fallback to colored placeholder if image fails to load
+                      e.currentTarget.style.display = 'none';
+                      if (e.currentTarget.parentElement) {
+                        e.currentTarget.parentElement.style.backgroundColor = integration.logoColor;
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
                       {integration.name}
                     </h3>
-                    {integration.status === 'connected' && (
-                      <p className="text-sm text-gray-600 mt-1">
-                        {integration.account}
-                      </p>
+                    <p className="text-sm text-gray-500 leading-relaxed">
+                      {integration.description}
+                    </p>
+                  </div>
+                  <div className="flex-shrink-0">
+                    {integration.status === 'connected' ? (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-xs font-medium">
+                        <Check size={14} />
+                        Connected
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
+                        <Clock size={14} />
+                        Coming Soon
+                      </div>
                     )}
                   </div>
-                  <Badge
-                    status={integration.status}
-                    text={
-                      integration.status === 'connected'
-                        ? 'Connected'
-                        : 'Coming Soon'
-                    }
-                  />
                 </div>
 
                 {integration.status === 'connected' ? (
                   <>
-                    <div className="space-y-2 text-sm text-gray-600 mb-4">
-                      <div className="flex justify-between">
-                        <span>Connected:</span>
-                        <span className="font-medium">
-                          {integration.connectedDate}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Last Synced:</span>
-                        <span className="font-medium text-green-600">
-                          {integration.lastSynced}
-                        </span>
+                    {/* Account Info */}
+                    <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                      <p className="text-sm font-medium text-gray-700 mb-2">
+                        {integration.account}
+                      </p>
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <span>Last synced: <span className="text-green-600 font-medium">{integration.lastSynced}</span></span>
+                        <span>Connected {integration.connectedDate}</span>
                       </div>
                     </div>
-                    <button className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                      Reconnect
-                    </button>
+
+                    {/* Actions */}
+                    <div className="flex gap-3">
+                      <button className="flex-1 px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium text-sm transition-colors">
+                        Manage
+                      </button>
+                      <button className="px-4 py-2.5 text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors">
+                        Disconnect
+                      </button>
+                    </div>
                   </>
                 ) : (
                   <button
-                    className="w-full px-4 py-2 border border-gray-300 text-gray-400 rounded-lg cursor-not-allowed"
+                    className="w-full px-4 py-2.5 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed font-medium text-sm"
                     disabled
                   >
-                    Notify Me
+                    Coming Soon
                   </button>
                 )}
               </div>
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Help Section */}
+      <div className="glass-card p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100">
+        <div className="flex items-start gap-4">
+          <div className="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white text-xl">
+            ?
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">Need help with integrations?</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Check our documentation or contact support for assistance with setting up your integrations.
+            </p>
+            <div className="flex gap-3">
+              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm transition-colors">
+                View Documentation
+              </button>
+              <button className="px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-50 font-medium text-sm transition-colors border border-gray-300">
+                Contact Support
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -8,14 +8,16 @@ import {
   Plug,
   Settings,
   LogOut,
+  Sparkles,
 } from 'lucide-react';
 
 const Sidebar = () => {
   const menuItems = [
     { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
+    { path: '/ai-insights', icon: Sparkles, label: 'AI Insights', badge: 'NEW' },
     { path: '/customer-journey', icon: Route, label: 'Customer Journey' },
     { path: '/sales-calls', icon: Phone, label: 'Sales Calls' },
-    { path: '/webinars', icon: Video, label: 'Webinars', badge: 'NEW' },
+    { path: '/webinars', icon: Video, label: 'Webinars' },
     { path: '/tracking-setup', icon: Link2, label: 'Tracking Setup' },
     { path: '/integrations', icon: Plug, label: 'Integrations' },
     { path: '/settings', icon: Settings, label: 'Settings' },
